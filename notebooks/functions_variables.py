@@ -83,3 +83,16 @@ def read_json(file_path):
     
     file_df = pd.json_normalize(data_json['data']['results'])
     return file_df
+
+def cols_overview(df):
+  cols = []
+  for i in df:
+    col = {'nulls_count': df[i].isnull().sum(),
+         'col_name': i,
+         'col_data_1': df[i].head(5).tolist(),
+         'col_data_2': df[i].tail(5).tolist(),
+         'col_dtype': df[i].dtype}
+    cols.append(col)
+  to_df = pd.DataFrame(cols)
+  sorted = to_df.sort_values(by='nulls_count', ascending=False)
+  return sorted
