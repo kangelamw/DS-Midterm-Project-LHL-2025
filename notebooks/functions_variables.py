@@ -21,7 +21,7 @@ def encode_tags(df):
         
     return df
 
-# ----- I start here... ----- ###
+# ----- We start here... ----- ###
 def json_files_summary(path):
     """
     Summarizes files in a directory and stores file details in a df.
