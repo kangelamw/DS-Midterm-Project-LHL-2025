@@ -1,6 +1,8 @@
 # Imports
 import os
 import json
+import random
+import string
 import pandas as pd
 
 # Included with the project
@@ -111,3 +113,15 @@ def cols_overview(df):
     to_df = pd.DataFrame(cols)
     sorted = to_df.sort_values(by='nulls_count', ascending=False)
     return sorted
+
+def generate_id():
+    """
+    Generates a random ID with the following format: LLNNNN
+    where L is an uppercase letter and N is a digit.
+    """
+    # Generate 2 random uppercase letters
+    letters = ''.join(random.choices(string.ascii_uppercase, k=2))
+    # Generate 4 random digits
+    numbers = ''.join(random.choices(string.digits, k=4))
+    # Combine letters and numbers
+    return letters + numbers
