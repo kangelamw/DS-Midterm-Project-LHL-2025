@@ -4,9 +4,11 @@ import json
 import random
 import string
 import pandas as pd
+from collections import Counter
+from sklearn.preprocessing import MultiLabelBinarizer
 
-# Included with the project
-def encode_tags(df):
+# Modified function with Diba's code from the notebook.
+def encode_tags(df, min_frequency):
 
     """Use this function to manually encode tags from each sale.
     You could also provide another argument to filter out low 
@@ -14,13 +16,41 @@ def encode_tags(df):
        
     Args:
         pandas.DataFrame
+        min_frequency (int): Minimum number of times a tag must appear to be encoded.
 
     Returns:
         pandas.DataFrame: modified with encoded tags
     """
-    tags = df["tags"].tolist()
     # create a unique list of tags and then create a new column for each tag
-        
+    
+    # Flatten the list of all tags and count occurrences
+    tag_counts = Counter(df.explode("tags")["tags"])
+    
+    # Keep only tags that meet the minimum frequency requirement
+    common_tags = {tag for tag, count in tag_counts.items() if count >= min_frequency}
+    
+    # Encode tags as binary values
+    def filter_common_tags(tag_list):
+        if isinstance(tag_list, list):
+            return [tag for tag in tag_list if tag in common_tags]
+        return []
+    
+    df["tags"] = df["tags"].apply(filter_common_tags)
+    
+    # Removing rows that tags is empty after filtering
+    df = df[df["tags"].apply(lambda x: isinstance(x, list) and len(x) > 0)]
+    
+    # Apply MultiLabelBinarizer for one-hot encoding
+    mlb = MultiLabelBinarizer()
+    tags_encoded = pd.DataFrame(mlb.fit_transform(df["tags"]), columns=mlb.classes_)
+    
+    # Reset index before merging
+    df = df.reset_index(drop=True)
+    tags_encoded = tags_encoded.reset_index(drop=True)
+    
+    # Merge encoded tags with the original dataset
+    df = pd.concat([df.drop(columns=["tags"]), tags_encoded], axis=1)
+
     return df
 
 # ----- We start here... ----- ###
@@ -113,15 +143,3 @@ def cols_overview(df):
     to_df = pd.DataFrame(cols)
     sorted = to_df.sort_values(by='nulls_count', ascending=False)
     return sorted
-
-def generate_id():
-    """
-    Generates a random ID with the following format: LLNNNN
-    where L is an uppercase letter and N is a digit.
-    """
-    # Generate 2 random uppercase letters
-    letters = ''.join(random.choices(string.ascii_uppercase, k=2))
-    # Generate 4 random digits
-    numbers = ''.join(random.choices(string.digits, k=4))
-    # Combine letters and numbers
-    return letters + numbers
