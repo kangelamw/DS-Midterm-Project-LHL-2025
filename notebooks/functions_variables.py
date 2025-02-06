@@ -143,3 +143,31 @@ def cols_overview(df):
     to_df = pd.DataFrame(cols)
     sorted = to_df.sort_values(by='nulls_count', ascending=False)
     return sorted
+
+
+def calculate_min_frequency(data, column_name):
+    """
+    Calculates the minimum frequency threshold for filtering low-frequency categorical values (tags).
+
+    Parameters:
+    - data (pd.DataFrame): The dataset containing categorical values in list format.
+    - column_name (str): The column containing lists of categorical values.
+    - percentile (float): The percentile threshold for filtering (default: 10%).
+    - min_threshold (int): The minimum threshold to prevent excessive filtering (default: 5).
+
+    Returns:
+    - int: Suggested threshold for filtering low-frequency tags.
+    """
+
+    # Flatten the column and count occurrences
+    tag_counts = Counter(data.explode(column_name)[column_name])
+
+    # Convert to DataFrame
+    tag_counts_df = pd.DataFrame(tag_counts.items(), columns=["Tag", "Count"])
+    tag_counts_df = tag_counts_df.sort_values(by="Count", ascending=False)
+
+    # Determine threshold based on percentile
+    threshold = tag_counts_df["Count"].quantile(0.10)
+    threshold = max(5, int(threshold))  # Ensure minimum threshold is applied
+
+    return threshold
