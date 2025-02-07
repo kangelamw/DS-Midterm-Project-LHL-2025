@@ -7,7 +7,7 @@ import pandas as pd
 from collections import Counter
 from sklearn.preprocessing import MultiLabelBinarizer
 
-# Modified function with Diba's code from the notebook.
+
 def encode_tags(df, min_frequency):
 
     """Use this function to manually encode tags from each sale.
@@ -53,7 +53,6 @@ def encode_tags(df, min_frequency):
 
     return df
 
-# ----- We start here... ----- ###
 def json_files_summary(path):
     """
     Summarizes files in a directory and stores file details in a df.
