@@ -87,7 +87,7 @@ We tried a few models:
 |--------------------|-----------------|--------------------|--------|
 | **Test MAE**      | 0.2700           | **0.2536**         | **-6.1%** |
 | **Test RMSE**     | 0.3700           | **0.3525**         | **-4.7%** |
-| **Test R² Score** | 0.7758           | **0.7945**         | **+1.9%** |
+| **Test R² Score** | 0.7758           | **0.7945**         | **+2.4%** |
 
 ### Finetuned XGBoost Performance:
 - Lower MAE (0.2536) :: Predictions are now, on average, **closer to the actual price** 
